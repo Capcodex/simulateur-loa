@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Synthèse du bail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    h2 {
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Synthèse du Bail</h1>
+  <div class="section" id="infos"></div>
+  <div class="section" id="resultats"></div>
+
+  <button onclick="genererPDF()">Télécharger en PDF</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script>
+    const data = JSON.parse(localStorage.getItem("synthese_bail"));
+
+    if (!data) {
+      document.body.innerHTML = "<p>Aucune donnée à afficher. Veuillez remplir le formulaire.</p>";
+    } else {
+      const infos = `
+        <h2>Informations saisies</h2>
+        <p><strong>Mail :</strong> ${data.mail}</p>
+        <p><strong>Entreprise :</strong> ${data.entreprise}</p>
+        <p><strong>Taux d'impôt :</strong> ${data.taux}%</p>
+        <p><strong>Montant initial :</strong> ${data.montant} € (${data.typeMontant})</p>
+        <p><strong>Durée :</strong> ${data.month} mois</p>
+        <p><strong>Majoration du 1er loyer :</strong> ${data.majoration}</p>
+      `;
+
+      const resultats = `
+        <h2>Résultats</h2>
+        <p><strong>Coefficient appliqué :</strong> ${data.coefficient}</p>
+        <p><strong>Montant TTC pondéré :</strong> ${data.montantTTC} €</p>
+        <p><strong>1ère mensualité :</strong> ${data.premierLoyer} €</p>
+        <p><strong>Mensualités suivantes :</strong> ${data.mensualites} €</p>
+        <p><strong>Économie d’impôt estimée :</strong> ${data.economieImpots} €</p>
+        <p><strong>Coût réel estimé :</strong> ${data.coutReel} €</p>
+      `;
+
+      document.getElementById("infos").innerHTML = infos;
+      document.getElementById("resultats").innerHTML = resultats;
+    }
+
+    function genererPDF() {
+      const element = document.body;
+      html2pdf().from(element).save(`Synthese_Bail_${Date.now()}.pdf`);
+    }
+  </script>
+</body>
+</html>

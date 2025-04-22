@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulateur de financement</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Simulateur de financement</h1>
+
+    <form id="formulaire">
+      <div class="champ">
+        <label for="mail">Mail :</label>
+        <input type="text" id="mail" />
+      </div>
+
+      <div class="champ">
+        <label for="entreprise">Entreprise :</label>
+        <input type="text" id="entreprise" />
+      </div>
+
+      <div class="champ">
+        <label for="taux">Taux d'imposition (%) :</label>
+        <input type="number" id="taux" step="0.01" />
+      </div>
+
+      <div class="champ">
+        <label for="montant">Montant financé (€) :</label>
+        <input type="number" id="montant" />
+      </div>
+
+      <div class="champ">
+        <label for="month">Durée du bail (Mois) :</label>
+        <input type="number" id="month" step="1" />
+      </div>
+
+      <div class="champ">
+        <label for="majoration">Premier loyer majoré :</label>
+        <select id="majoration">
+          <option value="non">Non</option>
+          <option value="oui">Oui</option>
+        </select>
+      </div>
+
+      <div class="champ">
+        <label>Type de montant :</label>
+        <div>
+          <input type="radio" id="montantHT" name="typeMontant" value="HT" checked />
+          <label for="montantHT">HT</label>
+        </div>
+        <div>
+          <input type="radio" id="montantTTC" name="typeMontant" value="TTC" />
+          <label for="montantTTC">TTC</label>
+        </div>
+      </div>
+      
+
+      <button type="submit">Simuler</button>
+    </form>
+
+    <div id="result"></div>
+
+  </main>
+
+  <script type="module" src="src/main.ts"></script>
+</body>
+</html>
