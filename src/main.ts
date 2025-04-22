@@ -107,7 +107,8 @@ form.addEventListener("submit", (event) => {
   localStorage.setItem("synthese_bail", JSON.stringify(synthese));
 
   // Redirection vers la page synthèse
-  window.location.href = window.location.pathname.replace("index.html", "") + "synthese.html";
+  window.location.href = window.location.origin + window.location.pathname.replace("index.html", "") + "synthese.html";
+
 
  
 
