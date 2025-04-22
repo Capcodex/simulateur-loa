@@ -107,7 +107,9 @@ form.addEventListener("submit", (event) => {
   localStorage.setItem("synthese_bail", JSON.stringify(synthese));
 
   // Redirection vers la page synthèse
-  window.location.assign("synthese.html");
+ // Redirection vers la page synthèse
+window.location.href = window.location.origin + "/simulateur-loa/synthese.html";
+
 
 
 
