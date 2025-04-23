@@ -1,3 +1,5 @@
+import { jsPDF } from "jspdf";
+
 // Fonction utilitaire pour récupérer et valider les champs
 function getInputValue(id: string, type: "string" | "number" = "string"): string | number {
   const input = document.getElementById(id) as HTMLInputElement;
@@ -18,7 +20,7 @@ function getInputValue(id: string, type: "string" | "number" = "string"): string
 }
 
 // Fonction pour appliquer un coefficient de pondération selon la durée
-function getPondérationDurée(month: number): number {
+function getPonderationDuree(month: number): number {
   if (month <= 13) return 1;
   else if (month <= 24) return 1.008;
   else if (month <= 36) return 1.059;
@@ -55,18 +57,15 @@ form.addEventListener("submit", (event) => {
   const typeMontant = (document.querySelector('input[name="typeMontant"]:checked') as HTMLInputElement).value;
 
   // Conversion et pondération
-  let montantHT: number;
   let montantTTC: number;
-
   if (typeMontant === "HT") {
-    montantHT = montant * 1.2;
-    montantTTC = montantHT;
+    montantTTC = montant * 1.2;
   } else {
-    montantTTC = (montant * 1.2) * 1.2;
+    montantTTC = montant * 1.44; // 1.2 * 1.2
   }
 
   // Appliquer le coefficient de pondération
-  const coefficient = getPondérationDurée(month);
+  const coefficient = getPonderationDuree(month);
   montantTTC = montantTTC * coefficient;
 
   // Calcul du premier loyer majoré
@@ -126,7 +125,7 @@ form.addEventListener("submit", (event) => {
 function generatePDF() {
   const doc = new jsPDF();
   doc.text("Résumé du Bail", 20, 10);
-  doc.text("Nom: " + document.getElementById("nomResult")!.textContent, 20, 20);
+  doc.text("Nom: " + document.getElementById("mailResult")!.textContent, 20, 20);
   doc.text("Entreprise: " + document.getElementById("entrepriseResult")!.textContent, 20, 30);
   doc.text("Taux d'Imposition: " + document.getElementById("tauxResult")!.textContent, 20, 40);
   doc.text("Montant du Bien: " + document.getElementById("montantResult")!.textContent, 20, 50);
@@ -140,7 +139,3 @@ function generatePDF() {
   doc.text("Coût Réel: " + document.getElementById("coutReelResult")!.textContent + " €", 20, 130);
   doc.save("resultat_bail.pdf");
 }
-
-// Lier le bouton de téléchargement PDF
-const pdfButton = document.getElementById("downloadPdfButton") as HTMLButtonElement;
-pdfButton.addEventListener("click", generatePDF);
