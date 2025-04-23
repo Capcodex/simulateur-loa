@@ -1,68 +1,202 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Simulateur de financement</title>
-  <link rel="stylesheet" href="styles/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur LOA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .form-group .pdf-button {
+            background-color: #008CBA;
+        }
+        .form-group .pdf-button:hover {
+            background-color: #007bb5;
+        }
+    </style>
 </head>
 <body>
-  <main class="container">
-    <h1>Simulateur de financement</h1>
-
+    <h1>Simulation LOA</h1>
+    
+    <!-- Formulaire de saisie -->
     <form id="formulaire">
-      <div class="champ">
-        <label for="mail">Mail :</label>
-        <input type="text" id="mail" />
-      </div>
-
-      <div class="champ">
-        <label for="entreprise">Entreprise :</label>
-        <input type="text" id="entreprise" />
-      </div>
-
-      <div class="champ">
-        <label for="taux">Taux d'imposition (%) :</label>
-        <input type="number" id="taux" step="0.01" />
-      </div>
-
-      <div class="champ">
-        <label for="montant">Montant financé (€) :</label>
-        <input type="number" id="montant" />
-      </div>
-
-      <div class="champ">
-        <label for="month">Durée du bail (Mois) :</label>
-        <input type="number" id="month" step="1" />
-      </div>
-
-      <div class="champ">
-        <label for="majoration">Premier loyer majoré :</label>
-        <select id="majoration">
-          <option value="non">Non</option>
-          <option value="oui">Oui</option>
-        </select>
-      </div>
-
-      <div class="champ">
-        <label>Type de montant :</label>
-        <div>
-          <input type="radio" id="montantHT" name="typeMontant" value="HT" checked />
-          <label for="montantHT">HT</label>
+        <div class="form-group">
+            <label for="mail">Mail</label>
+            <input type="text" id="mail" required>
         </div>
-        <div>
-          <input type="radio" id="montantTTC" name="typeMontant" value="TTC" />
-          <label for="montantTTC">TTC</label>
+        <div class="form-group">
+            <label for="entreprise">Entreprise</label>
+            <input type="text" id="entreprise" required>
         </div>
-      </div>
-      
-
-      <button type="submit">Simuler</button>
+        <div class="form-group">
+            <label for="taux">Taux d'imposition (%)</label>
+            <input type="number" id="taux" required>
+        </div>
+        <div class="form-group">
+            <label for="montant">Montant du bien (€)</label>
+            <input type="number" id="montant" required>
+        </div>
+        <div class="form-group">
+            <label for="month">Durée du bail (en mois)</label>
+            <input type="number" id="month" required>
+        </div>
+        <div class="form-group">
+            <label for="majoration">Majoration du premier loyer</label>
+            <select id="majoration">
+                <option value="non">Non</option>
+                <option value="oui">Oui</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Type de Montant</label>
+            <input type="radio" id="ht" name="typeMontant" value="HT" checked>
+            <label for="ht">Hors Taxe</label>
+            <input type="radio" id="ttc" name="typeMontant" value="TTC">
+            <label for="ttc">Toutes Taxes Comprises</label>
+        </div>
+        <div class="form-group">
+            <button type="submit">Calculer</button>
+        </div>
     </form>
 
-    <div id="result"></div>
+    <!-- Section pour afficher les résultats -->
+    <div id="result" class="result" style="display: none;">
+        <h2>Résumé du Bail</h2>
+        <p><strong>Mail:</strong> <span id="mailResult"></span></p>
+        <p><strong>Entreprise:</strong> <span id="entrepriseResult"></span></p>
+        <p><strong>Taux d'Imposition:</strong> <span id="tauxResult"></span></p>
+        <p><strong>Montant du Bien:</strong> <span id="montantResult"></span></p>
+        <p><strong>Durée du Bail:</strong> <span id="monthResult"></span> mois</p>
+        <p><strong>Majoration du Premier Loyer:</strong> <span id="majorationResult"></span></p>
+        <p><strong>Type de Montant:</strong> <span id="typeMontantResult"></span></p>
+        <p><strong>Montant du Bail (TTC):</strong> <span id="montantTTCResult"></span> €</p>
+        <p><strong>Première Mensualité:</strong> <span id="premierLoyerResult"></span> €</p>
+        <p><strong>Mensualités Suivantes:</strong> <span id="mensualitesResult"></span> €</p>
+        <p><strong>Économie d'Impôt:</strong> <span id="economieImpotsResult"></span> €</p>
+        <p><strong>Coût Réel:</strong> <span id="coutReelResult"></span> €</p>
+        <div class="form-group">
+            <button class="pdf-button" id="downloadPdfButton">Télécharger le PDF</button>
+        </div>
+    </div>
 
-  </main>
+    <!-- Ajouter jsPDF pour générer le PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <script type="module" src="src/main.ts"></script>
+    <script>
+        // Fonction utilitaire pour récupérer et valider les champs
+        function getInputValue(id) {
+            const input = document.getElementById(id);
+            return input ? input.value.trim() : '';
+        }
+
+        // Fonction de calcul
+        document.getElementById('formulaire').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Récupérer les valeurs du formulaire
+            const mail = getInputValue("mail");
+            const entreprise = getInputValue("entreprise");
+            const taux = parseFloat(getInputValue("taux"));
+            const montant = parseFloat(getInputValue("montant"));
+            const month = parseInt(getInputValue("month"));
+            const majorationValue = document.getElementById("majoration").value;
+            const typeMontant = document.querySelector('input[name="typeMontant"]:checked').value;
+
+            // Validation de l'entrée
+            if (!mail || !entreprise || isNaN(taux) || isNaN(montant) || isNaN(month)) {
+                alert("Veuillez remplir tous les champs correctement.");
+                return;
+            }
+
+            // Calcul du montant TTC
+            let montantTTC;
+            if (typeMontant === "HT") {
+                montantTTC = montant * 1.2;  // Ajout de 20% de TVA
+            } else {
+                montantTTC = montant;
+            }
+
+            // Calcul du premier loyer et mensualités
+            let premierLoyer = (majorationValue === "oui") ? (montantTTC / month) * 3 : montantTTC / month;
+            const montantRestant = montantTTC - premierLoyer;
+            const mensualiteSuivantes = montantRestant / (month - 1);
+
+            // Calcul de l'économie d'impôt
+            const economieImpots = montantTTC * (taux / 100);
+            const coutReel = montantTTC - economieImpots;
+
+            // Affichage des résultats
+            document.getElementById("result").style.display = "block";  // Afficher la section des résultats
+            document.getElementById("mailResult").textContent = mail;
+            document.getElementById("entrepriseResult").textContent = entreprise;
+            document.getElementById("tauxResult").textContent = taux + "%";
+            document.getElementById("montantResult").textContent = montant.toFixed(2) + " €";
+            document.getElementById("monthResult").textContent = month;
+            document.getElementById("majorationResult").textContent = majorationValue === "oui" ? "Oui" : "Non";
+            document.getElementById("typeMontantResult").textContent = typeMontant === "HT" ? "Hors Taxe" : "Toutes Taxes Comprises";
+            document.getElementById("montantTTCResult").textContent = montantTTC.toFixed(2);
+            document.getElementById("premierLoyerResult").textContent = premierLoyer.toFixed(2);
+            document.getElementById("mensualitesResult").textContent = mensualiteSuivantes.toFixed(2);
+            document.getElementById("economieImpotsResult").textContent = economieImpots.toFixed(2);
+            document.getElementById("coutReelResult").textContent = coutReel.toFixed(2);
+        });
+
+        // Fonction pour générer et télécharger le PDF
+        document.getElementById("downloadPdfButton").addEventListener("click", function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFont("helvetica", "normal");
+
+            doc.text("Résumé", 10, 10);
+            doc.text("Nom: " + document.getElementById("nomResult").textContent, 10, 20);
+            doc.text("Entreprise: " + document.getElementById("entrepriseResult").textContent, 10, 30);
+            doc.text("Taux d'Imposition: " + document.getElementById("tauxResult").textContent, 10, 40);
+            doc.text("Montant du Bien: " + document.getElementById("montantResult").textContent, 10, 50);
+            doc.text("Durée du Bail: " + document.getElementById("monthResult").textContent + " mois", 10, 60);
+            doc.text("Majoration du Premier Loyer: " + document.getElementById("majorationResult").textContent, 10, 70);
+            doc.text("Type de Montant: " + document.getElementById("typeMontantResult").textContent, 10, 80);
+            doc.text("Montant du Bail (TTC): " + document.getElementById("montantTTCResult").textContent + " €", 10, 90);
+            doc.text("Première Mensualité: " + document.getElementById("premierLoyerResult").textContent + " €", 10, 100);
+            doc.text("Mensualités Suivantes: " + document.getElementById("mensualitesResult").textContent + " €", 10, 110);
+            doc.text("Économie d'Impôt: " + document.getElementById("economieImpotsResult").textContent + " €", 10, 120);
+            doc.text("Coût Réel: " + document.getElementById("coutReelResult").textContent + " €", 10, 130);
+
+            doc.save("simulation_loa.pdf");
+        });
+    </script>
 </body>
 </html>
